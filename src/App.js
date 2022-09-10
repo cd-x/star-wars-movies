@@ -6,26 +6,19 @@ import "./App.css";
 function App() {
   const [dummyMovies, setDummyMovies] = useState([]);
 
-  const btnClickHandler = (event) => {
-    event.preventDefault();
+  const btnClickHandler = async () => {
     const url = `https://swapi.dev/api/films`;
-    try {
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-          const transformedMovies = data.results.map((movie) => {
-            return {
-              id: movie["episode_id"],
-              title: movie.title,
-              openingText: movie.opening_crawl,
-              releaseDate: movie.release_date,
-            };
-          });
-          setDummyMovies(transformedMovies);
-        });
-    } catch {
-      console.log("Error fetching data !");
-    }
+    const response = await fetch(url);
+    const data = await response.json();
+    const transformedMovies = data.results.map((movie) => {
+      return {
+        id: movie["episode_id"],
+        title: movie.title,
+        openingText: movie.opening_crawl,
+        releaseDate: movie.release_date,
+      };
+    });
+    setDummyMovies(transformedMovies);
   };
 
   return (
