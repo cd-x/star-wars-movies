@@ -7,30 +7,49 @@ import AddMovie from "./components/AddMovie";
 function App() {
   const [dummyMovies, setDummyMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const [isError, setIsError] = useState(null);
 
   const btnClickHandler = useCallback(async () => {
-    setIsError(false);
+    setIsError(null);
     setIsLoading(true);
-    const url = `https://swapi.dev/api/films`;
-    const response = await fetch(url);
-    if (!response.ok) {
-      setIsError(true);
+    let tempMovies = [];
+    try {
+      const url = `https://react-http-efd10-default-rtdb.asia-southeast1.firebasedatabase.app/movies.json`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Error Occured while fetching Data !");
+      }
+      const data = await response.json();
+      const transformedMovies = Object.keys(data).map((id) => {
+        const movie = data[id];
+        return {
+          id: id,
+          ...movie,
+        };
+      });
+      tempMovies = transformedMovies;
+    } catch (error) {
+      setIsError(error.message);
+    } finally {
+      setDummyMovies(tempMovies);
+      setIsLoading(false);
     }
-    const data = await response.json();
-    const transformedMovies = data.results.map((movie) => {
-      return {
-        id: movie.episode_id,
-        title: movie.title,
-        openingText: movie.opening_crawl,
-        releaseDate: movie.release_date,
-      };
-    });
-    setDummyMovies(transformedMovies);
-    setIsLoading(false);
   }, []);
 
-  const addMovieHandler = (movie) => {};
+  const addMovieHandler = async (movie) => {
+    const response = await fetch(
+      "https://react-http-efd10-default-rtdb.asia-southeast1.firebasedatabase.app/movies.json",
+      {
+        method: "POST",
+        body: JSON.stringify(movie),
+        headers: {
+          "content-type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+  };
 
   useEffect(() => {
     btnClickHandler();
@@ -47,7 +66,7 @@ function App() {
       <section>
         {isError && (
           <p>
-            Error Occured while fetching data{" "}
+            {isError}
             <span role="img" aria-label="Snowman">
               &#9731;
             </span>
