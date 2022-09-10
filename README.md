@@ -7,3 +7,16 @@
 </div>
 
 # star-wars-movies
+
+<div>
+<div>
+<h3>Features</h3>
+<ul>
+<li> Uses Firebase to Store Data</li>
+<li> Has basic error handline during for Http Requests</li>
+</ul>
+</div>
+<div align="right">
+    <img height="auto" src ="./Screenshots/Simple-Add-Movie-App.png">
+</div>
+</div>
